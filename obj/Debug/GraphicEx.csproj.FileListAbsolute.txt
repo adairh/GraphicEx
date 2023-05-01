@@ -1,0 +1,9 @@
+D:\CodingProjects\Rider\WindowPrograming\GraphicEx\bin\Debug\GraphicEx.exe.config
+D:\CodingProjects\Rider\WindowPrograming\GraphicEx\bin\Debug\GraphicEx.exe
+D:\CodingProjects\Rider\WindowPrograming\GraphicEx\bin\Debug\GraphicEx.pdb
+D:\CodingProjects\Rider\WindowPrograming\GraphicEx\obj\Debug\GraphicEx.Properties.Resources.resources
+D:\CodingProjects\Rider\WindowPrograming\GraphicEx\obj\Debug\GraphicEx.csproj.GenerateResource.cache
+D:\CodingProjects\Rider\WindowPrograming\GraphicEx\obj\Debug\GraphicEx.exe
+D:\CodingProjects\Rider\WindowPrograming\GraphicEx\obj\Debug\GraphicEx.pdb
+D:\CodingProjects\Rider\WindowPrograming\GraphicEx\obj\Debug\GraphicEx.Form1.resources
+D:\CodingProjects\Rider\WindowPrograming\GraphicEx\obj\Debug\GraphicEx.csprojResolveAssemblyReference.cache
