@@ -33,12 +33,13 @@ namespace GraphicEx
         public Form1()
         {
             InitializeComponent();
-            
-            movingShapes = new List<Shape>();
             gp = this.plMain.CreateGraphics();
+            movingShapes = new List<Shape>();
             tempPoint = new Point();
             tempGroupWorking = false;
         }
+        
+        
         private void btnDuongThang_Click(object sender, EventArgs e)
         {
             //this.bLine = true;
@@ -72,6 +73,19 @@ namespace GraphicEx
             currentShape = new ElipseShape(gp, true);
         }
         
+        private void btnCircle_Click(object sender, EventArgs e)
+        {
+            m = mode.Circle;
+            currentShape = new CircleShape(gp);
+        }
+        
+        
+        private void btnFilledCircle_Click(object sender, EventArgs e)
+        {
+            m = mode.FilledCircle;
+            currentShape = new CircleShape(gp, true);
+        }
+        
         private void btnArc_Click(object sender, EventArgs e)
         {
             m = mode.Arc;
@@ -98,11 +112,13 @@ namespace GraphicEx
                 {
                     movingShapes.Add(getShapeAt(e.Location));
                     groupBTN.Enabled = true;
+                    button5.Enabled = true;
                 }
                 else
                 {
                     movingShapes.Clear();
                     groupBTN.Enabled = false;
+                    button5.Enabled = false;
                     movingShape = getShapeAt(e.Location);
                     if (movingShape != null)
                     {
@@ -111,25 +127,36 @@ namespace GraphicEx
                         {
                             //MessageBox.Show(movingShape.id + "");
                             movingShape = movingShape.parentShape;
+                            
                         }
+                           
+                        //MessageBox.Show(movingShape.GetType().ToString());
                         //MessageBox.Show(movingShape.id + "");
                         clickedMovePoint = e.Location;
                     }
+
                 }
                 return;
             }
             if (isntStart)//first click
             {
-                label2.Text = ("constructor fired");
+                //label2.Text = ("constructor fired");
                 this.tempPoint.X = e.X;
                 this.tempPoint.Y = e.Y;
                 this.isntStart = false;
                 currentShape.tools.pen = new Pen(penColor.Color, trackBar1.Value);
                 DashStyle sd;
-                DashStyle.TryParse(comboBox.SelectedItem.ToString(), true, out sd);
+                try
+                {
+                    DashStyle.TryParse(comboBox.SelectedItem.ToString(), true, out sd);
+                }
+                catch (Exception exception)
+                {
+                    sd = DashStyle.Solid;
+                }
                 currentShape.tools.pen.DashStyle = sd;
                 currentShape.tools.brush = new SolidBrush(brushColor.Color);
-                currentShape.started = tempPoint;
+                currentShape.started = tempPoint; 
             }
         }
 
@@ -173,13 +200,13 @@ namespace GraphicEx
         
         private void plMain_MouseMove(object sender, MouseEventArgs e)
         {
-            String sss = "";
+            /*String sss = "";
             foreach (Shape s in Program.shapes.Values)
             {
                 sss += (s.id.ToString());
             }
 
-            label3.Text = sss;
+            label3.Text = sss;*/
             if (this.isntStart == false)
             {
                 tempPoint.X = e.X;
@@ -196,10 +223,10 @@ namespace GraphicEx
                 if (movingShape != null)
                 {
                     //if (movingShape is CombinationShape) return;
-                    label1.Text = (e.X - clickedMovePoint.X) + " " +
+                    /*label1.Text = (e.X - clickedMovePoint.X) + " " +
                                   (e.Y - clickedMovePoint.Y) + " " +
                                   (e.X - clickedMovePoint.X) + " " +
-                                  (e.Y - clickedMovePoint.Y);
+                                  (e.Y - clickedMovePoint.Y);*/
                     movingShape.adjustSEXY(
                         e.X - clickedMovePoint.X, 
                         e.Y - clickedMovePoint.Y, 
@@ -229,7 +256,7 @@ namespace GraphicEx
 
         enum mode
         {
-            Line, Rect, FilledRect, Eclipse, FilledEclipse, Arc, Polygon, FilledPolygon, Combination, None
+            Line, Rect, FilledRect, Eclipse, FilledEclipse, Circle, FilledCircle, Arc, Polygon, FilledPolygon, Combination, None
         }
 
         private void btnBrushColor(object sender, EventArgs e)
@@ -262,27 +289,68 @@ namespace GraphicEx
         {
             if (movingShapes.Count > 0)
             {
-                currentShape = new CombinationShape(gp);
-                foreach (Shape sh in movingShapes)
+                if (movingShapes.Count == 1)
                 {
-                    sh.parentShape = currentShape;
-                    ((CombinationShape)currentShape).addShape(sh);
-                    Program.shapes.Remove(sh.id);
-                }
+                    if (movingShapes[0] is CombinationShape)
+                    {
+                        CombinationShape cs = (CombinationShape)movingShapes[0];
+                        //MessageBox.Show(cs.getChildShapes().Count + "");
+                        foreach (Shape s in cs.getChildShapes())
+                        {
+                            //MessageBox.Show(cs.getChildShapes().Count + "a");
+                            s.parentShape = null;
+                            Program.shapes.Add(s.id, s);
+                        }
 
-                
-                groupBTN.Enabled = false;
-                currentShape.generateBound();
-                Program.shapes.Add(currentShape.id, currentShape);
-                movingShapes.Clear();
-                //already able to group shape but still cant move
+                        Program.shapes.Remove(cs.id);
+                        groupBTN.Enabled = false;
+                        button5.Enabled = false;
+                        movingShapes.Clear();
+                    }
+
+                }
+                else
+                {
+                    currentShape = new CombinationShape(gp);
+                    foreach (Shape sh in movingShapes)
+                    {
+                        sh.parentShape = currentShape;
+                        ((CombinationShape)currentShape).addShape(sh);
+                        Program.shapes.Remove(sh.id);
+                    }
+                    
+
+                    groupBTN.Enabled = false;
+                    button5.Enabled = false;
+                    currentShape.generateBound();
+                    Program.shapes.Add(currentShape.id, currentShape);
+                    movingShapes.Clear();
+                    //already able to group shape but still cant move
+                }
             }
+
         }
 
 
         private void label2_Click(object sender, EventArgs e)
         {
-            label2.Text = "M";
+            //label2.Text = "M";
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            foreach (Shape s in movingShapes)
+            {
+                Program.shapes.Remove(s.id);
+            }
+            groupBTN.Enabled = false;
+            button5.Enabled = false;
+            plMain.Refresh();
+            foreach (Shape s in Program.shapes.Values)
+            {
+                s.Draw();
+            }
+        }
+        
     }
 }

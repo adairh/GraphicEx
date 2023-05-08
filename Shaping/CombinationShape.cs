@@ -78,5 +78,10 @@ namespace GraphicEx
         {
             
         }
+
+        public List<Shape> getChildShapes()
+        {
+            return shapes;
+        }
     }
 }
